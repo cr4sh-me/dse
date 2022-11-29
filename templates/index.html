@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/style.css') }}">
+    <title>DSE panel</title>
+</head>
+<body>
+    <div id="container" class="center">
+        <p>D<mark class="a">iscord</mark> S<mark class="b">erver</mark> E<mark class="c">xecutor</mark></p>
+        <div id="user-input" class="center">
+            <form action="" method="POST">
+                <label for="a">Discord server XPath</label>
+                <input type="text" id="server-xpath" name="a" placeholder="Full XPath" value="{{
+                    request.form.a }}"><br><br>
+                <label for="b">Discord channel XPath</label>
+                <input type="text" id="server-xpath" name="b" placeholder="Full XPath" value="{{
+                    request.form.b }}"><br><br>
+                <label for="c">Message to sent</label>
+                <input type="text" id="message" name="c" placeholder="DBot attack!" value="{{
+                    request.form.c }}"><br><br>
+                <label for="d">Message count</label>
+                <input type="number" id="message-count" name="d" placeholder="100" value="{{
+                    request.form.d }}">
+                <label for="e">Unlimited</label>
+                <input type="checkbox" id="unlimited" name="e"><br><br>
+                <input type="submit" value="Start!">
+              </form>
+              {% if error %}
+                <p class="error"><strong>Error:</strong> {{ error }}
+              {% endif %}
+        </div>
+    </div>
+    <script type="text/javascript">
+        document.getElementById('unlimited').onchange = function() {
+            document.getElementById('message-count').value = '';
+            document.getElementById('message-count').disabled = this.checked;
+        }
+            
+
+
+
+    </script>
+</body>
+</html>

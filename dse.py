@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 import os, sys
@@ -38,14 +38,15 @@ requiredNamed.add_argument(
         required=True,
         help=("Specify message to send on channel/s. " +
             "Example: -m 'DBot attack!'"))
-requiredNamed.add_argument(
+
+optionalNamed = parser.add_argument_group('optional') ### OPTIONAL ARGS ###
+optionalNamed.add_argument(
         "-n",
         "--number",
         type=str,
-        required=True,
+        required=False,
         help=("Number of messages to send. " +
             "Example: -c 25"))
-optionalNamed = parser.add_argument_group('optional') ### OPTIONAL ARGS ###
 optionalNamed.add_argument(
         "-u",
         "--unlimited",
@@ -69,6 +70,10 @@ else:
     user = credentials.user
     password = credentials.password
 
+if args.unlimited is False and args.number is None:
+    print(bstring.ERROR, 'Unkown message number, use -u or -v option!\n')
+    exit(1)
+
 # Setup variables
 discord_xpath = args.xpath 
 discord_channel = args.channel
@@ -83,13 +88,13 @@ else:
 # Disable warnings and selenium messages
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
-chrome_options = Options()
+chrome_options = ChromeOptions()
 chrome_options.add_experimental_option("detach", True) # Keep browser open after script has finished
 chrome_options.add_experimental_option('excludeSwitches', ['enable-logging']) # Disble selenium messages
 chrome_options.add_argument("--log-level=3") # Disable selenium messages
 
-with contextlib.redirect_stdout(None):
-    browser = webdriver.Chrome(executable_path='chromedriver.exe',options=chrome_options)
+
+browser = webdriver.Chrome(executable_path='chromedriver.exe',options=chrome_options)
 element = WebDriverWait(browser, 20)
 
 if __name__ == '__main__':

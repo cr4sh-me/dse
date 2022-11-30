@@ -3,6 +3,7 @@ from modules.banner import bstring
 import os
 import argparse
 import datetime
+import subprocess
 import flask.cli
 import logging
 import re
@@ -42,10 +43,6 @@ if args.verbose is False:
 
 app = Flask(__name__)
 
-# @app.route('/')
-# def redirect_page():
-#     return render_template('/redirect.html') 
-
 @app.route("/", methods=["POST", "GET"])
 def index():
     
@@ -78,14 +75,28 @@ def index():
         
         print(bstring.INFO, "Input ok, launching DSE!")
         # Set up the dse.py command
-        code = "python3 dse.py -x '" + xpath + "' -c '" + xpath_channel + "' -m '" + message + "'"
+        code = 'python3 dse.py -x "' + xpath + '" -c "' + xpath_channel + '" -m "' + message +  '"'
         if unlimited_run == True:
-            code = code + ' -u' 
+            code = code + ' -u'
         else:
             code = code + ' -n ' + message_count
-        print('myjob')
-        
-        return render_template('/redirect.html', error=code) # Not an error, just sending cmd to redirect.html 
+
+        # os.system(r'"%s"' % code) 
+        # return render_template('/redirect.html', error=code) # Not an error, just sending cmd to redirect.html 
+
+        def master_profile_update(inputs):
+        # since input parameters are global inside the upper scope
+        # i omit them from the arguments of lower nested function:
+            def profile_update()
+            #take updates and update the database 
+            return "it worked"
+
+        profile_update()
+        #do maintenance processing now..
+       
+
+    
+
 
     else:
         print(bstring.INFO, 'Website opened!')

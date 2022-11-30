@@ -1,5 +1,5 @@
 from flask import Flask, redirect, url_for, request, render_template, request
-from modules.banner import bstring
+from modules.banner import bstring, print_banner_server
 import os
 import argparse
 import datetime
@@ -50,10 +50,14 @@ def index():
     code = None
     if request.method == "POST":
         # current_date = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) 
-        xpath = request.form['a']
-        xpath_channel = request.form['b']
+        channel_id = request.form['a']
+        time = request.form['b']
         message = request.form['c']
         unlimited = request.form.get('e') # returns None or 'on'
+        mode = request.form.get('options')
+        image = request.form['img']
+
+        print('\n', image, '\n')
 
         if unlimited == 'on' :
             unlimited_run = True
@@ -63,52 +67,51 @@ def index():
 
         # Catch errors
         if unlimited_run == False:
-            if xpath == '' or message == '' or message_count == '':
+            if channel_id == '' or message == '' or message_count == '':
                 print(bstring.INFO, "Empty input error!")
                 error = "Empty imput. Use brain!"
                 return render_template('/index.html', error=error) 
         elif unlimited_run == True:
-            if xpath == '' or message == '':
+            if channel_id == '' or message == '':
                 print(bstring.INFO, "Empty input error!")
                 error = "Empty imput. Use brain!"
                 return render_template('/index.html', error=error)
         
-        print(bstring.INFO, "Input ok, launching DSE!")
+        print(bstring.INFO, "Launching DSE...\n")
         # Set up the dse.py command
-        code = 'python3 dse.py -x "' + xpath + '" -c "' + xpath_channel + '" -m "' + message +  '"'
+        code = 'python3 dse.py -c ' + channel_id 
+        if mode == 'mode1':
+            code = code + ' -m "' + message +  '"' + ' -md 1 '
+        elif mode == 'mode2':
+            code = code + ' -i "' + image +  '"' + ' -md 2 '
+        else:
+            code = code + ' -m "' + message +  '"' + ' -i "' + image +  '"' + ' -md 3 '
+
         if unlimited_run == True:
             code = code + ' -u'
-        else:
+        elif message_count != '':
             code = code + ' -n ' + message_count
+        
 
-        # os.system(r'"%s"' % code) 
-        # return render_template('/redirect.html', error=code) # Not an error, just sending cmd to redirect.html 
+        if time != '':
+            code = code + ' -t ' + time
 
-        def master_profile_update(inputs):
-        # since input parameters are global inside the upper scope
-        # i omit them from the arguments of lower nested function:
-            def profile_update()
-            #take updates and update the database 
-            return "it worked"
-
-        profile_update()
-        #do maintenance processing now..
-       
-
-    
-
+        os.system(r'"%s"' % code) 
+        render_template('/redirect.html', error=code)
+        return render_template('/redirect.html', error=code) # Not an error, just sending cmd to redirect.html 
 
     else:
-        print(bstring.INFO, 'Website opened!')
+        print(bstring.INFO, 'DSE panel loaded!')
         return render_template('/index.html') 
 
 
 if __name__ == '__main__':
-    print(bstring.BOLD + "[ DSE Server v1.0 ]" + bstring.RESET)
+    os.system('cls') # Windows
+    print_banner_server()
     print(bstring.INFO, "Server started http://%s:%s" % (HOST_NAME,PORT))
     try:
         app.run(host=HOST_NAME, port=PORT)
     except KeyboardInterrupt:
         pass
+        print(bstring.ERROR + "Server stopped!")
         app.stop()
-        print("\n" + "Server stopped")

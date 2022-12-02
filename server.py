@@ -77,6 +77,7 @@ def index():
                 error = "Empty imput. Use brain!"
                 return render_template('/index.html', error=error)
         
+        render_template('/redirect.html', error='st')
         print(bstring.INFO, "Launching DSE...\n")
         # Set up the dse.py command
         code = 'python3 dse.py -c ' + channel_id 
@@ -96,8 +97,9 @@ def index():
         if time != '':
             code = code + ' -t ' + time
 
+        # render_template('/redirect.html', error=code)
+
         os.system(r'"%s"' % code) 
-        render_template('/redirect.html', error=code)
         return render_template('/redirect.html', error=code) # Not an error, just sending cmd to redirect.html 
 
     else:
@@ -106,7 +108,6 @@ def index():
 
 
 if __name__ == '__main__':
-    os.system('cls') # Windows
     print_banner_server()
     print(bstring.INFO, "Server started http://%s:%s" % (HOST_NAME,PORT))
     try:

@@ -1,3 +1,10 @@
+import os
+
+if os.name == 'nt':
+    cmd = 'cls'
+else:
+    cmd = 'clear'
+
 class bstring:
     ERROR = '[\033[91merror\033[0m]'
     INFO = '[\033[92minfo\033[0m]'
@@ -11,7 +18,6 @@ class bstring:
     UNDERLINE = '\033[4m'
 
 def print_banner():
-
     print(bstring.BLUE + """\
 ╔╦╗┬┌─┐┌─┐┌─┐┬─┐┌┬┐  ╔═╗┌─┐┬─┐┬  ┬┌─┐┬─┐  ╔═╗─┐ ┬┌─┐┌─┐┬ ┬┌┬┐┌─┐┬─┐
  ║║│└─┐│  │ │├┬┘ ││  ╚═╗├┤ ├┬┘└┐┌┘├┤ ├┬┘  ║╣ ┌┴┬┘├┤ │  │ │ │ │ │├┬┘
@@ -21,9 +27,8 @@ bstring.BOLD + """
 """ + bstring.RESET)
 
 def print_banner_server():
-
+    os.system(cmd)
     print(bstring.VIOLET + """\
-
 ╔╦╗╔═╗╔═╗  ╔═╗┌─┐┬─┐┬  ┬┌─┐┬─┐
  ║║╚═╗║╣   ╚═╗├┤ ├┬┘└┐┌┘├┤ ├┬┘
 ═╩╝╚═╝╚═╝  ╚═╝└─┘┴└─ └┘ └─┘┴└─""" + bstring.RESET +

@@ -1,9 +1,11 @@
 import time
 import os, sys
 import requests
-from modules.banner import bstring, print_banner
+from modules.dse_modules import *
+from modules.banner import *
 from creds import credentials
 import argparse
+import random
 
 parser = argparse.ArgumentParser(description='Discord Server Executor help')
 parser._action_groups.pop()
@@ -20,7 +22,7 @@ requiredNamed.add_argument(
         "--mode",
         type=int,
         required=True,
-        help=("Choose mode. 1 - text msg only, 2 - images only, 3 - all" +
+        help=("Choose mode. 1 - text msg only, 2 - images only, 3 - img+txt, 4 - join server, 5 - leave server, 6 - send friend request" +
             "Example: -c 2"))
 optionalNamed = parser.add_argument_group('optional') ### OPTIONAL ARGS ###
 optionalNamed.add_argument(
@@ -71,10 +73,10 @@ if credentials.token == '':
     print(bstring.ERROR, "Token wasn't set! Go to creds folder and fill up credentials.py!\n")
     exit(1)
 else:
-    headers = {"authorization": credentials.token}
+    token = credentials.token
 
 if args.unlimited is False and args.number is None:
-    print(bstring.ERROR, 'Unkown message number, use -u or -v option!\n')
+    print(bstring.ERROR, 'Unkown message number, use -u or -n option!\n')
     exit(1)
 
 if args.images is not None:
@@ -87,22 +89,11 @@ if args.images is not None:
 else:
     files_a = None
 
-if args.mode == 1 and args.images is not None:
-    print(bstring.ERROR, 'Cannot use text message mode with -i option. Use brain!\n')
-    exit(1)
-if args.mode == 2 and args.message is not None:
-    print(bstring.ERROR, 'Cannot use image mode with -m option. Use brain!\n')
-    exit(1)
-if args.mode == 3 and args.message is None and args.images is None:
-    print(bstring.ERROR, 'Img+txt mode needs -i and -m options specified. Use brain!\n')
-    exit(1)
-
-
 # Setup variables
 channelID = args.channel
 
 if args.message is not None:
-    message = {'content': args.message}
+    message = args.message
 else:
     message = None
 
@@ -117,60 +108,56 @@ if args.time is not None:
 else:
     sleep_time = 0
 
-if args.mode == 1:
-    mode = 1
-elif args.mode == 2:
-    mode = 2
-elif args.mode == 3:
-    mode = 3
+if args.mode in range(1,6):
+    mode = args.mode
 else:
     print(bstring.ERROR, 'Unknown mode! Are you kidding?\n')
     exit(1)
+
+with open("./files/useragent.txt" , encoding="utf-8") as f:
+    useragent = random.choice(f.readlines()).split("\n")[0]
+
+with open("./files/proxies.txt" , encoding="utf-8") as f:
+    proxies = random.choice(f.readlines()).split("\n")[0]
 
 if __name__ == '__main__':
     try:
         # Start
         print_banner()
 
-        def send_msg(msg):
-            # print(files_a)
-            requests.post(f"https://discord.com/api/v10/channels/{channelID}/messages", data=msg, headers=headers, files=files_a)
-            
-
-        # if mode == 2:
-        if args.unlimited is True:
-            i=0
+        if loop_unlimited is True:
+            iteration=0
+            limit = 0
             while True:
-                i=i+1
-                send_msg(message)
-                print("\rSent message - {}".format(i))
-                time.sleep(sleep_time)
+                if mode == 1:
+                    iteration=iteration+1
+                    send_message(token, channelID, message, useragent, proxies, iteration, limit, sleep_time)
+                elif mode == 2:
+                    send_image(token, channelID, files_a, useragent, proxies, iteration, limit, sleep_time)
+                elif mode == 3:
+                    send_mixed(token, channelID, message, files_a, useragent, proxies, iteration, limit, sleep_time)
+            
         else:
-            for i in range(message_number):
-                send_msg(message)
-                print("\rSent message - {}/{}".format(i+1,message_number))
-                time.sleep(sleep_time)
+            limit = message_number
+            for iteration in range(message_number):
+                if mode == 1:
+                    iteration=iteration+1
+                    send_message(token, channelID, message, useragent, proxies, iteration, limit, sleep_time)
+                elif mode == 2:
+                    send_image(token, channelID, files_a, useragent, proxies, iteration, limit, sleep_time)
+                elif mode == 3:
+                    send_mixed(token, channelID, message, files_a, useragent, proxies, iteration, limit, sleep_time)
 
-
-                    
-                
-
-        # if args.unlimited is True:
-        #     i=0
-        #     while True:
-        #         i=i+1
-        #         requests.post(f"https://discord.com/api/v10/channels/{channelID}/messages", data=message, headers=headers, files=files)
-        #         print("\rSent message - {}".format(i))
-        #         time.sleep(sleep_time)
-        # else:
-        #     for i in range(message_number):
-        #         requests.post(f"https://discord.com/api/v10/channels/{channelID}/messages", data=message, headers=headers, files=files)
-        #         print("\rSent message - {}/{}".format(i+1,message_number))
-        #         time.sleep(sleep_time)
+            if mode == 4:
+                join_server(token, guildid, useragent, proxies)
+            elif mode == 5:
+                leave_server(token, guildid, useragent, proxies)
+            elif mode == 6:
+                friend_request(token, userid, userAgent, proxies)
 
         print('\n' + bstring.INFO, 'Job completed!\n')
         exit(0)
                 
     except KeyboardInterrupt:
         pass
-        print(bstring.INFO, "\nInterrupt received!\n")
+        print("\n" + bstring.INFO, "Interrupt received!\n")

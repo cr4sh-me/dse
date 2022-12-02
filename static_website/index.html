@@ -4,25 +4,88 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" type="text/css" href="style/style.css">
     <title>DSE panel</title>
 </head>
 <body>
     <div id="container" class="center">
         <p>D<mark class="a">iscord</mark> S<mark class="b">erver</mark> E<mark class="c">xecutor</mark></p>
         <div id="user-input" class="center">
-            <form action="">
-                <label for="server-xpath-name">Discord server XPath</label>
-                <input type="text" id="server-xpath" name="server-xpath-name" placeholder="XPath"><br><br>
-                <label for="message-name">Message to sent</label>
-                <input type="text" id="message" name="message-name" placeholder="DBot attack!"><br><br>
-                <label for="message-count-name">Message count</label>
-                <input type="number" id="message-count" name="message-count-name" placeholder="100">
-                <label for="unlimited-name">Unlimited</label>
-                <input type="checkbox" id="unlimited" name="unlimited-name"><br><br>
-                <input type="submit" value="Start!">
-              </form>
+            <div class="tab">
+                <button class="tablinks" onclick="openCity(event, 'London')">London</button>
+                <button class="tablinks" onclick="openCity(event, 'Paris')">Paris</button>
+                <button class="tablinks" onclick="openCity(event, 'Tokyo')">Tokyo</button>
+              </div>
+
+              <!-- Tab content -->
+            <div id="London" class="tabcontent">
+                <h3>Mode1</h3>
+                <!-- REQUIED -->
+                <label for="options">Mode</label>
+                <select name="options" id="modes">
+                    <option value="mode1">Mode 1 - (text messages)</option>
+                    <option value="mode2">Mode 2 - (images)</option>
+                    <option value="mode3">Mode 3 - (both)</option>
+                </select><br><br>
+                <label for="a">Discord channel ID</label>
+                <input type="text" id="server-xpath" name="a" placeholder="Channel ID" value="{{
+                    request.form.a }}"><br><br>
+            </div>
+            
+            <div id="Paris" class="tabcontent">
+                <p>Mode 2</p>
+            </div>
+            
+            <div id="Tokyo" class="tabcontent">
+                <h3>Mode3</h3>
+                <p>Tokyo is the capital of Japan.</p>
+            </div>
+            <form action="" method="POST">
+                
+                
+              {% if error %}
+                <p class="error"><strong>Error:</strong> {{ error }}
+              {% endif %}
         </div>
     </div>
+    <script type="text/javascript">
+        document.getElementById('unlimited').onchange = function() {
+            document.getElementById('message-count').value = '';
+            document.getElementById('message-count').disabled = this.checked;
+        }
+            
+        var option = document.getElementById('modes').value
+        var message = document.getElementById('message')
+        var img = document.getElementById('img')
+        if(option == 'mode1'){
+            message.disabled == false;
+            image.disabled = true;
+        } else if(option == 'mode2'){
+            alert('2');
+        } else if(option == 'mode3'){ 
+            alert('3')
+        }
+
+        function openCity(evt, cityName) {
+                                // Declare all variables
+            var i, tabcontent, tablinks;
+
+                                // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
 </body>
 </html>

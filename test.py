@@ -1,4 +1,5 @@
 import requests
+import json
 
 channelID = 1047596177241145375
 headers = {"authorization": "NzAxMTYyNTAwMzM0NTUxMTEx.GCOla9.X1_O7Tg6athNFPdAR9S5xf7Yp4brvSidHcl58M"}
@@ -10,8 +11,9 @@ message = {
     'content': "Test"
 }
 
+guilds = 843734303518490644
 
 
-for i in range(5):
-    req = requests.post(f"https://discord.com/api/v9/channels/{channelID}/messages", data=message, headers=headers, files=files_a)
-    print(req)
+req = requests.get(f"https://discord.com/api/v9/guilds/{guilds}/channels", headers=headers)
+for channel in (req.text):
+    print(channel)
